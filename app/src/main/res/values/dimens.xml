@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--Login-->
+    <dimen name="login_text_fields_margin">24dp</dimen>
+    <dimen name="login_button_height">64dp</dimen>
+    <dimen name="login_logo_margin_top">120dp</dimen>
+
+    <!--Main-->
+    <dimen name="main_activity_padding">8dp</dimen>
+    <dimen name="label_size">21sp</dimen>
+    <dimen name="fields_margin">8dp</dimen>
+    <dimen name="bio_text_size">18sp</dimen>
+    <dimen name="main_icon_padding">8dp</dimen>
+    <dimen name="main_button_height">64dp</dimen>
+    
+    <!--Repository-->
+    <dimen name="repository_list_margin">16dp</dimen>
+
+    <!--Settings-->
+    <dimen name="setting_item_margin">8dp</dimen>
+    <dimen name="setting_name_text">16sp</dimen>
+    <dimen name="setting_desc_text">14sp</dimen>
+
+    <!--Filter Dialog-->
+    <dimen name="filter_dialog_padding">16dp</dimen>
+    <dimen name="filter_item_margin">16dp</dimen>
+    <dimen name="filter_title_dialog">20sp</dimen>
+</resources>

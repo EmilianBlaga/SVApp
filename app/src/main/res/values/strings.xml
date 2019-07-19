@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">GithubApp</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="log_out">Log Out</string>
+    <string name="bio">Bio</string>
+    <string name="location">Location</string>
+    <string name="email">E-mail</string>
+    <string name="created">Created</string>
+    <string name="updated">Updated</string>
+    <string name="public_repos">Public Repos</string>
+    <string name="private_repos">Private Repos</string>
+    <string name="view_repositories">View Repositories</string>
+    <string name="contact_by_email">Contact by E-mail</string>
+    <string name="email_subject">E-mail from Github App</string>
+    <string name="missing_email">The user doesn\'t have a public e-mail address.</string>
+    <string name="title_repository_list">Repositories</string>
+    <string name="title_repository_detail">Repository Detail</string>
+    <string name="affiliation">Affiliation</string>
+    <string name="affiliation_desc">Affiliation option for fetching repositories</string>
+    <string name="sort">Sort</string>
+    <string name="sort_desc">Sort criteria for repositories</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+
+    <string-array name="filters">
+        <item>Owner</item>
+        <item>Collaborator</item>
+        <item>Organization Member</item>
+    </string-array>
+
+    <string name="pushed">Pushed</string>
+    <string name="full_name">Full Name</string>
+
+</resources>

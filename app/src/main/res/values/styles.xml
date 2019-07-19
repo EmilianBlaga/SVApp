@@ -1,0 +1,63 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <!-- Base application theme. -->
+    <style name="NoActionBarTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="MainTextLabel" parent="Widget.AppCompat.TextView">
+        <item name="android:textSize">@dimen/label_size</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_margin">@dimen/fields_margin</item>
+    </style>
+
+    <style name="BioTextLabel" parent="Widget.AppCompat.TextView">
+        <item name="android:textSize">@dimen/bio_text_size</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:layout_margin">@dimen/fields_margin</item>
+    </style>
+
+    <style name="MainText" parent="Widget.AppCompat.TextView">
+        <item name="android:textSize">@dimen/label_size</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_margin">@dimen/fields_margin</item>
+    </style>
+
+    <style name="SettingName" parent="Widget.AppCompat.TextView">
+        <item name="android:textSize">@dimen/setting_name_text</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="SettingDesc" parent="Widget.AppCompat.TextView">
+        <item name="android:textSize">@dimen/setting_desc_text</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="FilterDialogTitle" parent="Widget.AppCompat.TextView">
+        <item name="android:textSize">@dimen/filter_title_dialog</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+
+</resources>
