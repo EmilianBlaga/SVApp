@@ -11,12 +11,12 @@ import ro.ebsv.githubapp.repositories.models.Repository
 @Dao
 interface RepoDao {
 
-    @Query("SELECT * FROM repos WHERE 1")
+    @Query("SELECT * FROM repositoriesLiveData WHERE 1")
     fun getRepos(): Single<List<Repository>>
 
-    @Query("DELETE FROM repos WHERE 1")
+    @Query("DELETE FROM repositoriesLiveData WHERE 1")
     fun deleteAll(): Completable
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(repos: ArrayList<Repository>): Completable
+    fun insertAll(repos: ArrayList<Repository>): Single<List<Long>>
 }

@@ -24,7 +24,7 @@ class LoginActivity : AppCompatActivity() {
         viewModel = ViewModelProviders.of(this, ViewModelFactory(this)).get(LoginViewModel::class.java)
 
         setupActions()
-        setupObservables()
+        setupObservers()
     }
 
     private fun setupActions() {
@@ -37,7 +37,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupObservables() {
+    private fun setupObservers() {
         viewModel.userObservable().observe(this, Observer { user ->
             when (user) {
                 is User.Success -> {

@@ -44,14 +44,14 @@ class LoginViewModel: BaseViewModel() {
 
         authInterceptor.setCredentials(username, password)
 
-        val apiDisp = apiService.getAuthenticatedUser().subscribe({
-            val insertUserDisp = dataBase.userDao().insert(it).subscribe {
-
+        val apiDisp = apiService.getAuthenticatedUser().subscribe({user ->
+            val insertUserDisp = dataBase.userDao().insert(user).subscribe ({
                 saveUserCredentials(username, password)
-                UserManager.user = it
-                userLiveData.postValue(User.Success(it))
-
-            }
+                UserManager.user = user
+                userLiveData.postValue(User.Success(user))
+            }, {
+                it
+            })
 
             compositeDisposable.add(insertUserDisp)
         }, {

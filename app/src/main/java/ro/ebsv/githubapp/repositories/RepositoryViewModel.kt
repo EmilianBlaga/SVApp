@@ -23,35 +23,60 @@ class RepositoryViewModel: BaseViewModel() {
     lateinit var dataBase: GithubDataBase
 
     private val reposLiveData = MutableLiveData<List<Repository>>()
+    private val repositoryLiveData = MutableLiveData<Repository>()
 
     private var currentAffiliation = enumValues<Constants.Repository.Filters.Affiliation>().joinToString {it.name}
     private var currentSortCriteria = Constants.Repository.Sort.Criteria.full_name
+    private lateinit var currentVisibility: Constants.Repository.Filters.Visibility
 
     private val compositeDisposable = CompositeDisposable()
 
-    fun repos(): LiveData<List<Repository>> = reposLiveData
+    fun repositoriesLiveData(): LiveData<List<Repository>> = reposLiveData
+    fun repositoryLiveData(): LiveData<Repository> = repositoryLiveData
 
-    fun getRepositories(visibility: Constants.Repository.Filters.Visibility = Constants.Repository.Filters.Visibility.all,
-                        affiliation: String = enumValues<Constants.Repository.Filters.Affiliation>().joinToString {it.name},
-                        sort: Constants.Repository.Sort.Criteria = Constants.Repository.Sort.Criteria.full_name,
+    fun getCurrentReposData(): Pair<String, Constants.Repository.Sort.Criteria> {
+        return Pair(currentAffiliation, currentSortCriteria)
+    }
+
+    fun setVisibility(visibility: Constants.Repository.Filters.Visibility) {
+        currentVisibility = visibility
+    }
+
+    fun setAffiliation (affiliation: String) {
+        currentAffiliation = affiliation
+    }
+
+    fun setSortCriteria(sortCriteria: Constants.Repository.Sort.Criteria) {
+        currentSortCriteria = sortCriteria
+    }
+
+    fun setRepository(repository: Repository) {
+        repositoryLiveData.value = repository
+    }
+
+    fun getRepositories(affiliation: String = currentAffiliation,
+                        sort: Constants.Repository.Sort.Criteria = currentSortCriteria,
+                        visibility: Constants.Repository.Filters.Visibility = currentVisibility,
                         direction: Constants.Repository.Sort.Direction = Constants.Repository.Sort.Direction.asc) {
 
-
+        currentVisibility = visibility
         currentAffiliation = affiliation
         currentSortCriteria = sort
 
         val apiDisp = apiService.getRepositories(visibility, affiliation, sort, direction)
-            .subscribe({
-                val insertReposDisp = dataBase.reposDao().insertAll(it).subscribe {
-                    reposLiveData.postValue(it)
-                }
+            .subscribe({repos ->
+                val insertReposDisp = dataBase.reposDao().insertAll(repos).subscribe ({
+                    reposLiveData.postValue(repos)
+                }, {
+                    reposLiveData.postValue(repos)
+                })
 
                 compositeDisposable.add(insertReposDisp)
             },{
                 val dbDisp = dataBase.reposDao().getRepos().subscribe ({
                     reposLiveData.postValue(it)
                 },{
-                    //No repos found
+                    //No repositoriesLiveData found
                 })
 
                 compositeDisposable.add(dbDisp)
@@ -59,10 +84,6 @@ class RepositoryViewModel: BaseViewModel() {
 
         compositeDisposable.add(apiDisp)
 
-    }
-
-    fun getCurrentReposData(): Pair<String, Constants.Repository.Sort.Criteria> {
-        return Pair(currentAffiliation, currentSortCriteria)
     }
 
     override fun onCleared() {

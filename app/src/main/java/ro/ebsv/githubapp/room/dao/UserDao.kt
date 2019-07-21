@@ -1,6 +1,5 @@
 package ro.ebsv.githubapp.room.dao
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
 import io.reactivex.Completable
 import io.reactivex.Single
@@ -13,7 +12,7 @@ interface UserDao {
     fun fetchUser(): Single<User>
 
     @Insert
-    fun insert(user: User): Completable
+    fun insert(user: User): Single<Long>
 
     @Update
     fun update(user: User): Completable

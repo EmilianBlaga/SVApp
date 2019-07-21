@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 import ro.ebsv.githubapp.network.BaseResponse
 import java.io.Serializable
 
-@Entity(tableName = "repos")
+@Entity(tableName = "repositoriesLiveData")
 data class Repository (
     @PrimaryKey
     var id: Int,
