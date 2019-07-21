@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity() {
 
         return when (item.itemId) {
             R.id.logout -> {
-                viewModel.clearSharedPreferences()
+                viewModel.clearData()
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupObservables() {
-        viewModel.onClearPrefs().observe(this, Observer {
+        viewModel.onClearData().observe(this, Observer {
             goToSplash()
         })
     }

@@ -3,20 +3,25 @@ package ro.ebsv.githubapp.login
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import io.reactivex.disposables.CompositeDisposable
+import retrofit2.adapter.rxjava2.HttpException
 import ro.ebsv.githubapp.base.BaseViewModel
 import ro.ebsv.githubapp.data.Constants
 import ro.ebsv.githubapp.datasources.GitDataSource
 import ro.ebsv.githubapp.login.models.User
 import ro.ebsv.githubapp.managers.UserManager
+import ro.ebsv.githubapp.network.ApiService
 import ro.ebsv.githubapp.network.AuthInterceptor
+import ro.ebsv.githubapp.room.database.GithubDataBase
+import java.net.SocketTimeoutException
 import javax.inject.Inject
 import javax.inject.Named
 
 class LoginViewModel: BaseViewModel() {
 
     @Inject
-    @field:Named("GithubDataSource")
-    lateinit var gitDataSource: GitDataSource
+    @field:Named("GithubApiService")
+    lateinit var apiService: ApiService
 
     @Inject
     lateinit var authInterceptor: AuthInterceptor
@@ -25,29 +30,52 @@ class LoginViewModel: BaseViewModel() {
     @field:Named("SharedPreferences")
     lateinit var sharedPreferences: SharedPreferences
 
-    private val messageLiveData = MutableLiveData<String>()
-    private val successAuthLiveData = MutableLiveData<Boolean>()
+    @Inject
+    @field:Named("GithubDataBase")
+    lateinit var dataBase: GithubDataBase
 
-    fun message(): LiveData<String> = messageLiveData
-    fun auth(): LiveData<Boolean> = successAuthLiveData
+    private val userLiveData = MutableLiveData<User>()
+
+    fun userObservable(): LiveData<User> = userLiveData
+
+    private val compositeDisposable = CompositeDisposable()
 
     fun authenticateUser(username: String, password: String) {
 
         authInterceptor.setCredentials(username, password)
 
-        gitDataSource.getUser().observeForever { user ->
-            when(user) {
-                is User.Success -> {
-                    saveUserCredentials(username, password)
-                    UserManager.user = user
-                    successAuthLiveData.value = true
-                }
-                is User.Error -> {
-                    messageLiveData.value = user.message
-                }
-            }
-        }
+        val apiDisp = apiService.getAuthenticatedUser().subscribe({
+            val insertUserDisp = dataBase.userDao().insert(it).subscribe {
 
+                saveUserCredentials(username, password)
+                UserManager.user = it
+                userLiveData.postValue(User.Success(it))
+
+            }
+
+            compositeDisposable.add(insertUserDisp)
+        }, {
+            userLiveData.postValue(User.Error(manageError(it)))
+        })
+
+        compositeDisposable.add(apiDisp)
+
+    }
+
+    private fun manageError(throwable: Throwable): String = when (throwable) {
+        is SocketTimeoutException -> {
+            "No Internet Connection"
+        }
+        is HttpException -> {
+
+            when (throwable.code()) {
+                401 -> "Username or password are incorrect"
+                403, 404 -> "Not authorized"
+                else -> "Something went wrong"
+            }
+
+        }
+        else -> "Something went wrong"
     }
 
     private fun saveUserCredentials(username: String, password: String) {
@@ -57,4 +85,10 @@ class LoginViewModel: BaseViewModel() {
         sharedPrefsEditor.apply()
     }
 
+
+    override fun onCleared() {
+        super.onCleared()
+        compositeDisposable.clear()
+        compositeDisposable.dispose()
+    }
 }

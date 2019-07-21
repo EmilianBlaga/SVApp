@@ -26,6 +26,8 @@ class SplashActivity : AppCompatActivity() {
 
 
         setupObservables()
+
+        viewModel.checkUser()
     }
 
     private fun setupObservables() {

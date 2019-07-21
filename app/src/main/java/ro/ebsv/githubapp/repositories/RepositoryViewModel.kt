@@ -1,23 +1,33 @@
 package ro.ebsv.githubapp.repositories
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import io.reactivex.disposables.CompositeDisposable
 import ro.ebsv.githubapp.base.BaseViewModel
 import javax.inject.Inject
 import javax.inject.Named
 import ro.ebsv.githubapp.data.Constants
 import ro.ebsv.githubapp.datasources.GitDataSource
+import ro.ebsv.githubapp.network.ApiService
 import ro.ebsv.githubapp.repositories.models.Repository
+import ro.ebsv.githubapp.room.database.GithubDataBase
 
 class RepositoryViewModel: BaseViewModel() {
 
     @Inject
-    @field:Named("GithubDataSource")
-    lateinit var gitDataSource: GitDataSource
+    @field:Named("GithubApiService")
+    lateinit var apiService: ApiService
 
-    private lateinit var reposLiveData: LiveData<List<Repository>>
+    @Inject
+    @field:Named("GithubDataBase")
+    lateinit var dataBase: GithubDataBase
+
+    private val reposLiveData = MutableLiveData<List<Repository>>()
 
     private var currentAffiliation = enumValues<Constants.Repository.Filters.Affiliation>().joinToString {it.name}
     private var currentSortCriteria = Constants.Repository.Sort.Criteria.full_name
+
+    private val compositeDisposable = CompositeDisposable()
 
     fun repos(): LiveData<List<Repository>> = reposLiveData
 
@@ -30,7 +40,24 @@ class RepositoryViewModel: BaseViewModel() {
         currentAffiliation = affiliation
         currentSortCriteria = sort
 
-        reposLiveData = gitDataSource.getRepositories(visibility, affiliation, sort, direction)
+        val apiDisp = apiService.getRepositories(visibility, affiliation, sort, direction)
+            .subscribe({
+                val insertReposDisp = dataBase.reposDao().insertAll(it).subscribe {
+                    reposLiveData.postValue(it)
+                }
+
+                compositeDisposable.add(insertReposDisp)
+            },{
+                val dbDisp = dataBase.reposDao().getRepos().subscribe ({
+                    reposLiveData.postValue(it)
+                },{
+                    //No repos found
+                })
+
+                compositeDisposable.add(dbDisp)
+            })
+
+        compositeDisposable.add(apiDisp)
 
     }
 
@@ -38,6 +65,10 @@ class RepositoryViewModel: BaseViewModel() {
         return Pair(currentAffiliation, currentSortCriteria)
     }
 
-
+    override fun onCleared() {
+        super.onCleared()
+        compositeDisposable.clear()
+        compositeDisposable.dispose()
+    }
 
 }
