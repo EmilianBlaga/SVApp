@@ -1,9 +1,9 @@
 package ro.ebsv.githubapp.repositories.listeners
 
-import ro.ebsv.githubapp.repositories.models.Repository
+import ro.ebsv.githubapp.room.entities.RepositoryEntity
 
 interface OnRepositoryClickListener {
 
-    fun onRepositoryClicked(repository: Repository)
+    fun onRepositoryClicked(repository: RepositoryEntity)
 
 }

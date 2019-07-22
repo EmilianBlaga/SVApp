@@ -8,9 +8,6 @@ import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.fragment_repository_detail.*
 import ro.ebsv.githubapp.R
-import ro.ebsv.githubapp.data.Constants
-import ro.ebsv.githubapp.injection.ViewModelFactory
-import ro.ebsv.githubapp.repositories.models.Repository
 import javax.inject.Inject
 
 class RepositoryDetailFragment: Fragment() {

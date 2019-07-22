@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.activity_repository.*
@@ -22,8 +23,6 @@ class RepositoryActivity : AppCompatActivity() {
     lateinit var viewModel: RepositoryViewModel
 
     private var twoPane = false
-
-    private val TAG = "RepositoryActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,10 +74,6 @@ class RepositoryActivity : AppCompatActivity() {
     }
     private fun setupLayout() {
 
-        supportFragmentManager.addOnBackStackChangedListener {
-            Log.d(TAG, "Fragments in stack: " + supportFragmentManager.backStackEntryCount)
-        }
-
         val listFragment = RepositoryListFragment()
 
         if (twoPane) {
@@ -99,21 +94,16 @@ class RepositoryActivity : AppCompatActivity() {
 
     private fun openDetailsFragment () {
 
+        supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+
         val fragmentTransaction = supportFragmentManager.beginTransaction()
-
-        val fragmentToBeRemoved = supportFragmentManager.findFragmentByTag("RepositoryDetailFragment")
-
-        fragmentToBeRemoved?.let {
-            fragmentTransaction.remove(fragmentToBeRemoved)
-        }
-
         val fragment = RepositoryDetailFragment()
 
         if (twoPane) {
             fragmentTransaction.replace(R.id.flRepositoryDetails, fragment)
         } else {
             fragmentTransaction.add(R.id.flRepository, fragment)
-                .addToBackStack("RepositoryDetailFragment")
+                .addToBackStack(null)
         }
 
         fragmentTransaction.commit()

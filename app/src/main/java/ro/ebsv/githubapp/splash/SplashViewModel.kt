@@ -54,7 +54,7 @@ class SplashViewModel: BaseViewModel() {
             userLiveData.postValue(User.Success(it))
         }, {
             val dbDisp = dataBase.userDao().fetchUser().subscribe ({
-                userLiveData.postValue(User.Success(it))
+                userLiveData.postValue(User.Success(it.toUser()))
             }, {
                 userLiveData.postValue(User.Error(manageError(it)))
             })

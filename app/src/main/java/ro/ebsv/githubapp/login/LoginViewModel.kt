@@ -7,7 +7,6 @@ import io.reactivex.disposables.CompositeDisposable
 import retrofit2.adapter.rxjava2.HttpException
 import ro.ebsv.githubapp.base.BaseViewModel
 import ro.ebsv.githubapp.data.Constants
-import ro.ebsv.githubapp.datasources.GitDataSource
 import ro.ebsv.githubapp.login.models.User
 import ro.ebsv.githubapp.managers.UserManager
 import ro.ebsv.githubapp.network.ApiService
@@ -45,9 +44,9 @@ class LoginViewModel: BaseViewModel() {
         authInterceptor.setCredentials(username, password)
 
         val apiDisp = apiService.getAuthenticatedUser().subscribe({user ->
-            val insertUserDisp = dataBase.userDao().insert(user).subscribe ({
+            val insertUserDisp = dataBase.userDao().insert(user.toUserEntity()).subscribe ({
                 saveUserCredentials(username, password)
-                UserManager.user = user
+                UserManager.user = user.toUserEntity()
                 userLiveData.postValue(User.Success(user))
             }, {
                 it

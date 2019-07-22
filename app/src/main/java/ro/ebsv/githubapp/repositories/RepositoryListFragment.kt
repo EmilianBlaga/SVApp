@@ -11,10 +11,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_repository_list.*
 import ro.ebsv.githubapp.R
-import ro.ebsv.githubapp.injection.ViewModelFactory
 import ro.ebsv.githubapp.repositories.adapters.RepositoryListAdapter
 import ro.ebsv.githubapp.repositories.listeners.OnRepositoryClickListener
-import ro.ebsv.githubapp.repositories.models.Repository
+import ro.ebsv.githubapp.room.entities.RepositoryEntity
 import javax.inject.Inject
 
 class RepositoryListFragment: Fragment(), OnRepositoryClickListener {
@@ -46,11 +45,11 @@ class RepositoryListFragment: Fragment(), OnRepositoryClickListener {
 
     private fun setupObservables() {
         viewModel.repositoriesLiveData().observe(this, Observer { repositories ->
-            (rvRepositories.adapter as RepositoryListAdapter).setRepositories(repositories as ArrayList<Repository>)
+            (rvRepositories.adapter as RepositoryListAdapter).setRepositories(repositories as ArrayList<RepositoryEntity>)
         })
     }
 
-    override fun onRepositoryClicked(repository: Repository) {
+    override fun onRepositoryClicked(repository: RepositoryEntity) {
         viewModel.setRepository(repository)
     }
 }

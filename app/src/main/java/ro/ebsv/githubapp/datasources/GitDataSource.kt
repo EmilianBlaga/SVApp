@@ -13,6 +13,9 @@ import ro.ebsv.githubapp.repositories.models.Repository
 import ro.ebsv.githubapp.room.database.GithubDataBase
 import java.net.SocketTimeoutException
 
+/**
+ * Not used in this project anymore. Maybe in the near future.
+ */
 class GitDataSource(private val apiService: ApiService,
                     private val database: GithubDataBase): DataSource {
 
@@ -27,7 +30,7 @@ class GitDataSource(private val apiService: ApiService,
             .observeOn(Schedulers.io())
             .subscribe({
                 database.userDao().deleteAll().subscribe {
-                    database.userDao().insert(it)
+                    database.userDao().insert(it.toUserEntity())
                     apiSource.postValue(it)
                 }
         },{
@@ -90,8 +93,9 @@ class GitDataSource(private val apiService: ApiService,
         val disp = apiService.getRepositories(visibility, affiliation, sort, direction)
             .observeOn(Schedulers.io())
             .subscribe({
+                val reposEntityList = it.map { it.toRepositoryEntity() }
                 database.reposDao().deleteAll().subscribe {
-                    database.reposDao().insertAll(it)
+                    database.reposDao().insertAll(reposEntityList)
                     reposMediator.postValue(it)
                 }
             },{})
