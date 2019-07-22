@@ -1,31 +1,30 @@
 package ro.ebsv.githubapp.repositories
 
-import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_repository_list.*
 import ro.ebsv.githubapp.R
-import ro.ebsv.githubapp.data.Constants
 import ro.ebsv.githubapp.repositories.adapters.RepositoryListAdapter
 import ro.ebsv.githubapp.repositories.listeners.OnRepositoryClickListener
-import ro.ebsv.githubapp.repositories.listeners.OnRepositorySelectListener
-import ro.ebsv.githubapp.repositories.models.Repository
+import ro.ebsv.githubapp.room.entities.RepositoryEntity
+import javax.inject.Inject
 
 class RepositoryListFragment: Fragment(), OnRepositoryClickListener {
 
-    private lateinit var repositorySelectListener: OnRepositorySelectListener
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        repositorySelectListener = context as OnRepositorySelectListener
-    }
+    @Inject
+    lateinit var viewModel: RepositoryViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        activity?.let {
+            viewModel = ViewModelProviders.of(it).get(RepositoryViewModel::class.java)
+        }
         return inflater.inflate(R.layout.fragment_repository_list, container, false)
     }
 
@@ -34,7 +33,9 @@ class RepositoryListFragment: Fragment(), OnRepositoryClickListener {
 
         setupRecyclerView()
 
-        showRepos()
+        setupObservables()
+
+        viewModel.getRepositories()
     }
 
     private fun setupRecyclerView() {
@@ -42,17 +43,13 @@ class RepositoryListFragment: Fragment(), OnRepositoryClickListener {
         rvRepositories.adapter = RepositoryListAdapter(this)
     }
 
-    private fun showRepos() {
-        arguments?.let {bundle ->
-            if (bundle.containsKey(Constants.Repository.BundleKeys.REPO_LIST)) {
-                val repositories = bundle.getSerializable(Constants.Repository.BundleKeys.REPO_LIST) as ArrayList<*>
-
-                (rvRepositories.adapter as RepositoryListAdapter).setRepositories(repositories as ArrayList<Repository>)
-            }
-        }
+    private fun setupObservables() {
+        viewModel.repositoriesLiveData().observe(this, Observer { repositories ->
+            (rvRepositories.adapter as RepositoryListAdapter).setRepositories(repositories as ArrayList<RepositoryEntity>)
+        })
     }
 
-    override fun onRepositoryClicked(repository: Repository) {
-        repositorySelectListener.onRepositorySelected(repository)
+    override fun onRepositoryClicked(repository: RepositoryEntity) {
+        viewModel.setRepository(repository)
     }
 }

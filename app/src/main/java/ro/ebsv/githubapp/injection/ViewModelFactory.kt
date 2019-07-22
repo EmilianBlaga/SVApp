@@ -10,11 +10,6 @@ import ro.ebsv.githubapp.splash.SplashViewModel
 
 class ViewModelFactory(private val activity: AppCompatActivity): ViewModelProvider.Factory{
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        /*if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
-            val db = Room.databaseBuilder(activity.applicationContext, AppDatabase::class.java, "posts").build()
-            @Suppress("UNCHECKED_CAST")
-            return PostListViewModel(db.postDao()) as T
-        }*/
 
         if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
             return MainViewModel() as T

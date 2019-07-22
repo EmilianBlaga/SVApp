@@ -7,6 +7,9 @@ import ro.ebsv.githubapp.injection.module.AppModule
 import ro.ebsv.githubapp.injection.module.NetworkModule
 import ro.ebsv.githubapp.injection.module.StorageModule
 
+/**
+ * The application component of the app. Used for dependency injection.
+ */
 class GithubApp: Application() {
 
     companion object {

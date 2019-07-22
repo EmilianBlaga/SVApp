@@ -14,8 +14,6 @@ import ro.ebsv.githubapp.managers.UserManager
 
 class SplashActivity : AppCompatActivity() {
 
-    private val TAG = "SplashActivity"
-
     lateinit var viewModel: SplashViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,13 +24,15 @@ class SplashActivity : AppCompatActivity() {
 
 
         setupObservables()
+
+        viewModel.checkUser()
     }
 
     private fun setupObservables() {
         viewModel.userObservable().observe(this, Observer {user ->
             when (user) {
                 is User.Success -> {
-                    UserManager.user = user
+                    UserManager.user = user.toUserEntity()
                     goToMain()
                 }
                 is User.Error -> {

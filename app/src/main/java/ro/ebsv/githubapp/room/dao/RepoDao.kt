@@ -1,21 +1,24 @@
 package ro.ebsv.githubapp.room.dao
 
-import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
+import androidx.sqlite.db.SupportSQLiteQuery
 import io.reactivex.Completable
-import ro.ebsv.githubapp.repositories.models.Repository
+import io.reactivex.Single
+import ro.ebsv.githubapp.room.entities.RepositoryEntity
 
 @Dao
 interface RepoDao {
 
-    @Query("SELECT * FROM repos WHERE 1")
-    fun getRepos(): LiveData<List<Repository>>
+    @Query("SELECT * FROM repositories WHERE 1")
+    fun getRepos(): Single<List<RepositoryEntity>>
 
-    @Query("DELETE FROM repos WHERE 1")
+    @RawQuery
+    fun getRepos(query: SupportSQLiteQuery): Single<List<RepositoryEntity>>
+
+    @Query("DELETE FROM repositories WHERE 1")
     fun deleteAll(): Completable
 
-    @Insert
-    fun insertAll(repos: ArrayList<Repository>)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertAll(repos: List<RepositoryEntity>): Single<List<Long>>
+
 }

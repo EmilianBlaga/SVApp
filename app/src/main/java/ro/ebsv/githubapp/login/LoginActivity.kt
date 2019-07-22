@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.activity_login.*
 import ro.ebsv.githubapp.R
 import ro.ebsv.githubapp.injection.ViewModelFactory
+import ro.ebsv.githubapp.login.models.User
 import ro.ebsv.githubapp.main.MainActivity
 
 class LoginActivity : AppCompatActivity() {
@@ -23,7 +24,7 @@ class LoginActivity : AppCompatActivity() {
         viewModel = ViewModelProviders.of(this, ViewModelFactory(this)).get(LoginViewModel::class.java)
 
         setupActions()
-        setupObservables()
+        setupObservers()
     }
 
     private fun setupActions() {
@@ -36,13 +37,16 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupObservables() {
-        viewModel.message().observe( this, Observer{message ->
-            Toast.makeText(this, message, Toast.LENGTH_LONG).show()
-        })
-
-        viewModel.auth().observe(this, Observer {
-            goToMain()
+    private fun setupObservers() {
+        viewModel.userObservable().observe(this, Observer { user ->
+            when (user) {
+                is User.Success -> {
+                    goToMain()
+                }
+                is User.Error -> {
+                    Toast.makeText(this, user.message, Toast.LENGTH_LONG).show()
+                }
+            }
         })
     }
 

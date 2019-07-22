@@ -1,5 +1,8 @@
 package ro.ebsv.githubapp.data
 
+/**
+ * Used to define the constants and enums of the app.
+ */
 class Constants {
 
     class Api {
@@ -39,6 +42,7 @@ class Constants {
             enum class Direction {
                 asc, desc
             }
+
         }
 
         class BundleKeys {

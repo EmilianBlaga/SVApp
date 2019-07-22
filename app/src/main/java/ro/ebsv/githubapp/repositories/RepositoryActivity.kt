@@ -4,20 +4,20 @@ import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.activity_repository.*
 import ro.ebsv.githubapp.R
 import ro.ebsv.githubapp.data.Constants
 import ro.ebsv.githubapp.injection.ViewModelFactory
-import ro.ebsv.githubapp.repositories.listeners.OnRepositorySelectListener
-import ro.ebsv.githubapp.repositories.models.Repository
 import ro.ebsv.githubapp.settings.SettingsActivity
 import javax.inject.Inject
 
-class RepositoryActivity : AppCompatActivity(), OnRepositorySelectListener {
+class RepositoryActivity : AppCompatActivity() {
 
     @Inject
     lateinit var viewModel: RepositoryViewModel
@@ -36,10 +36,12 @@ class RepositoryActivity : AppCompatActivity(), OnRepositorySelectListener {
 
         viewModel = ViewModelProviders.of(this, ViewModelFactory(this)).get(RepositoryViewModel::class.java)
 
-        viewModel.getRepositories(intent.getSerializableExtra(Constants.Repository.BundleKeys.REPO_VISIBILITY)
+        viewModel.setVisibility(intent.getSerializableExtra(Constants.Repository.BundleKeys.REPO_VISIBILITY)
                 as Constants.Repository.Filters.Visibility)
 
-        setupObservables()
+        setupObservers()
+
+        setupLayout()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -65,22 +67,14 @@ class RepositoryActivity : AppCompatActivity(), OnRepositorySelectListener {
             else -> super.onOptionsItemSelected(item)
         }
 
-    private fun setupObservables() {
-        viewModel.repos().observe(this, Observer { repos ->
-            setupLayout(repos)
+    private fun setupObservers() {
+        viewModel.repositoryLiveData().observe(this, Observer {
+            openDetailsFragment()
         })
     }
+    private fun setupLayout() {
 
-    private fun setupLayout(repositories: List<Repository>) {
-
-        val listFragment = RepositoryListFragment().apply {
-            arguments = Bundle().apply {
-                putSerializable(
-                    Constants.Repository.BundleKeys.REPO_LIST,
-                    arrayListOf(repositories)
-                )
-            }
-        }
+        val listFragment = RepositoryListFragment()
 
         if (twoPane) {
 
@@ -98,28 +92,21 @@ class RepositoryActivity : AppCompatActivity(), OnRepositorySelectListener {
 
     }
 
-    override fun onRepositorySelected (repository: Repository) {
+    private fun openDetailsFragment () {
 
-        val fragment = RepositoryDetailFragment().apply {
-            arguments = Bundle().apply {
-                putSerializable(
-                    Constants.Repository.BundleKeys.REPOSITORY,
-                    repository
-                )
-            }
-        }
+        supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+
+        val fragmentTransaction = supportFragmentManager.beginTransaction()
+        val fragment = RepositoryDetailFragment()
 
         if (twoPane) {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.flRepositoryDetails, fragment)
-                .commit()
-
+            fragmentTransaction.replace(R.id.flRepositoryDetails, fragment)
         } else {
-            supportFragmentManager.beginTransaction()
-                .add(R.id.flRepository, fragment)
+            fragmentTransaction.add(R.id.flRepository, fragment)
                 .addToBackStack(null)
-                .commit()
         }
+
+        fragmentTransaction.commit()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -129,9 +116,6 @@ class RepositoryActivity : AppCompatActivity(), OnRepositorySelectListener {
             Constants.Repository.REQUEST_CODE -> {
                 if (resultCode == Activity.RESULT_OK) {
                     viewModel.getRepositories(
-                        (intent.getSerializableExtra(Constants.Repository.BundleKeys.REPO_VISIBILITY)
-                                as Constants.Repository.Filters.Visibility),
-
                         data?.getStringExtra(Constants.Repository.BundleKeys.DEFAULT_FILTER)!!,
 
                         data.getSerializableExtra(Constants.Repository.BundleKeys.DEFAULT_SORT)

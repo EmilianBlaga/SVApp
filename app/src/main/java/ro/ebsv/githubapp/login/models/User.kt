@@ -1,22 +1,19 @@
 package ro.ebsv.githubapp.login.models
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
 import ro.ebsv.githubapp.network.BaseResponse
+import ro.ebsv.githubapp.room.entities.UserEntity
 
-@Entity(tableName = "user")
 open class User (
-    @PrimaryKey
     var id: Int,
-    var avatar_url: String,
-    var bio: String?,
-    var created_at: String,
-    var email: String?,
-    var location: String?,
-    var public_repos: Int,
-    var total_private_repos: Int,
-    var two_factor_authentication: Boolean,
-    var updated_at: String
+    var avatar_url: String? = null,
+    var bio: String? = null,
+    var created_at: String? = null,
+    var email: String? = null,
+    var location: String? = null,
+    var public_repos: Int? = null,
+    var total_private_repos: Int? = null,
+    var two_factor_authentication: Boolean = false,
+    var updated_at: String? = null
 ): BaseResponse() {
 
     constructor (user: User) : this(user.id, user.avatar_url, user.bio, user.created_at, user.email, user.location,
@@ -25,7 +22,8 @@ open class User (
         super.message = ""
     }
 
-    constructor(): this(0, "", "", "", "", "", 0, 0, false, "")
+    constructor(): this(0, "", "", "", "", "", 0,
+        0, false, "")
 
     constructor (id: Int,
                  avatar_url: String,
@@ -51,7 +49,13 @@ open class User (
         super.message = message
     }
 
+    fun toUserEntity(): UserEntity {
+        return UserEntity(id, avatar_url, bio, created_at, email, location, public_repos, total_private_repos,
+            two_factor_authentication, updated_at)
+    }
+
     class Success(user: User): User(user)
 
-    class Error(message: String): User( 0,"", "", "", "", "", 0, 0, false, "", message)
+    class Error(message: String): User( 0,"", "", "", "", "", 0,
+        0, false, "", message)
 }

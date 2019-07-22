@@ -4,7 +4,9 @@ import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import ro.ebsv.githubapp.base.BaseViewModel
+import ro.ebsv.githubapp.room.database.GithubDataBase
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -16,15 +18,30 @@ class MainViewModel: BaseViewModel() {
     @field:Named("SharedPreferences")
     lateinit var sharedPreferences: SharedPreferences
 
+    @Inject
+    @field:Named("GithubDataBase")
+    lateinit var dataBase: GithubDataBase
+
     private val compositeDisposable = CompositeDisposable()
 
-    private val clearPrefsLiveData = MutableLiveData<Boolean>()
+    private val clearDataLiveData = MutableLiveData<Boolean>()
 
-    fun onClearPrefs(): LiveData<Boolean> = clearPrefsLiveData
+    fun onClearData(): LiveData<Boolean> = clearDataLiveData
 
-    fun clearSharedPreferences() {
+    fun clearData() {
         sharedPreferences.edit().clear().apply()
-        clearPrefsLiveData.value = true
+
+        val deleteReposDisp  = dataBase.reposDao().deleteAll().subscribeOn(Schedulers.io()).subscribe {
+
+            val deleteUserDisp = dataBase.userDao().deleteAll().subscribe {
+
+                clearDataLiveData.postValue(true)
+            }
+
+            compositeDisposable.add(deleteUserDisp)
+        }
+
+        compositeDisposable.add(deleteReposDisp)
     }
 
     override fun onCleared() {

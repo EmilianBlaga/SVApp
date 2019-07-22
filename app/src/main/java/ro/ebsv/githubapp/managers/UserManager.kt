@@ -1,7 +1,7 @@
 package ro.ebsv.githubapp.managers
 
-import ro.ebsv.githubapp.login.models.User
+import ro.ebsv.githubapp.room.entities.UserEntity
 
 object UserManager {
-    var user: User? = null
+    var user: UserEntity? = null
 }
