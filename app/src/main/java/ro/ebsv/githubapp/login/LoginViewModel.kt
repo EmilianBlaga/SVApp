@@ -13,6 +13,7 @@ import ro.ebsv.githubapp.network.ApiService
 import ro.ebsv.githubapp.network.AuthInterceptor
 import ro.ebsv.githubapp.room.database.GithubDataBase
 import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -74,6 +75,10 @@ class LoginViewModel: BaseViewModel() {
             }
 
         }
+        is UnknownHostException -> {
+            "No Internet Connection"
+        }
+
         else -> "Something went wrong"
     }
 
