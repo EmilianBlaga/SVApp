@@ -67,28 +67,30 @@ class RepositoryViewModel: BaseViewModel() {
         val apiDisp = apiService.getRepositories(visibility, affiliation, sort, direction)
             .subscribe({repos ->
                 val entityReposList = repos.map { it.toRepositoryEntity() }
-                //Save them only if there are all repos ELSE just show them
-                if (visibility == Constants.Repository.Filters.Visibility.all &&
-                        affiliation == enumValues<Constants.Repository.Filters.Affiliation>().joinToString {it.name}) {
-                    val insertReposDisp = dataBase.reposDao().insertAll(entityReposList).subscribe({
-                        reposLiveData.postValue(entityReposList)
-                    }, {
-                        reposLiveData.postValue(entityReposList)
-                    })
 
-                    compositeDisposable.add(insertReposDisp)
-                } else {
-
+                val insertReposDisp = dataBase.reposDao().insertAll(entityReposList).subscribe({
                     reposLiveData.postValue(entityReposList)
+                }, {
+                    reposLiveData.postValue(entityReposList)
+                })
 
-                }
+                compositeDisposable.add(insertReposDisp)
 
             },{
 
                 var queryString = "SELECT * FROM repositories WHERE "
 
-                if (visibility != Constants.Repository.Filters.Visibility.all)
-                    queryString += "private_repo = ${(visibility == Constants.Repository.Filters.Visibility.private)} "
+                queryString += when (visibility) {
+                    Constants.Repository.Filters.Visibility.all -> {
+                        "private_repo IN (0, 1) AND "
+                    }
+                    Constants.Repository.Filters.Visibility.private -> {
+                        "private_repo = 1 AND "
+                    }
+                    Constants.Repository.Filters.Visibility.public -> {
+                        "private_repo = 0 AND "
+                    }
+                }
 
                 val affiliationsRequested = affiliation.split(",").map { it.replace(" ", "") }
 
