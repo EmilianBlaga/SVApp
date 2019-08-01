@@ -1,45 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/filter_dialog_padding">
 
-    <TextView
-            android:id="@+id/tvFilter"
+<layout>
+
+    <data>
+        <variable
+                name="filtersLayoutManager"
+                type="androidx.recyclerview.widget.LinearLayoutManager"/>
+
+        <variable
+                name="filtersAdapter"
+                type="ro.ebsv.githubapp.settings.adapters.FiltersListAdapter"/>
+        <variable
+                name="fragment"
+                type="ro.ebsv.githubapp.settings.FilterDialogFragment"/>
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:text="@string/affiliation"
-            style="@style/FilterDialogTitle"/>
+            android:padding="@dimen/filter_dialog_padding">
 
-    <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvFilters"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvFilter"
-            tools:listitem="@layout/filter_item"/>
+        <TextView
+                android:id="@+id/tvFilter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:text="@string/affiliation"
+                style="@style/FilterDialogTitle"/>
 
-    <com.google.android.material.button.MaterialButton
-            android:id="@+id/mbOK"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/rvFilters"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:text="@string/ok"
-            style="@style/Widget.MaterialComponents.Button.TextButton"/>
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvFilters"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvFilter"
+                tools:listitem="@layout/filter_item"
+                app:layoutManager="@{filtersLayoutManager}"
+                android:adapter="@{filtersAdapter}"/>
 
-    <com.google.android.material.button.MaterialButton
-            android:id="@+id/mbCancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/rvFilters"
-            app:layout_constraintEnd_toStartOf="@id/mbOK"
-            android:text="@string/cancel"
-            style="@style/Widget.MaterialComponents.Button.TextButton"/>
+        <com.google.android.material.button.MaterialButton
+                android:id="@+id/mbOK"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/rvFilters"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:text="@string/ok"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:onClick="@{() -> fragment.onOkClicked()}"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <com.google.android.material.button.MaterialButton
+                android:id="@+id/mbCancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/rvFilters"
+                app:layout_constraintEnd_toStartOf="@id/mbOK"
+                android:text="@string/cancel"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:onClick="@{() -> fragment.onCancelClicked()}"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

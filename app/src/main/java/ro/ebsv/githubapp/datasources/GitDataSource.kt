@@ -90,7 +90,7 @@ class GitDataSource(private val apiService: ApiService,
 
         val reposLiveData = MutableLiveData<List<Repository>>()
 
-        val disp = apiService.getRepositories(visibility, affiliation, sort, direction)
+        val disp = apiService.getRepositories(visibility.getValue(), affiliation, sort, direction)
             .observeOn(Schedulers.io())
             .subscribe({
                 val reposEntityList = it.map { it.toRepositoryEntity() }

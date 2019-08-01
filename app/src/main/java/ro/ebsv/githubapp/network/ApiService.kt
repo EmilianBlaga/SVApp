@@ -18,7 +18,7 @@ interface ApiService {
     fun getAuthenticatedUser(): Single<User>
 
     @GET("/user/repos")
-    fun getRepositories(@Query("visibility") visibility: Filters.Visibility = Filters.Visibility.all,
+    fun getRepositories(@Query("visibility") visibility: String = Filters.Visibility.all_repos.getValue(),
                         @Query("affiliation") affiliation: String = enumValues<Filters.Affiliation>().joinToString {it.name},
                         @Query("sort") sort: Sort.Criteria = Sort.Criteria.full_name,
                         @Query("direction") direction: Sort.Direction = Sort.Direction.asc): Single<ArrayList<Repository>>

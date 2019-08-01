@@ -1,6 +1,7 @@
-package ro.ebsv.githubapp.login
+package ro.ebsv.githubapp.login.mvvm
 
 import android.content.SharedPreferences
+import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.disposables.CompositeDisposable
@@ -34,13 +35,20 @@ class LoginViewModel: BaseViewModel() {
     @field:Named("GithubDataBase")
     lateinit var dataBase: GithubDataBase
 
-    private val userLiveData = MutableLiveData<User>()
-
-    fun userObservable(): LiveData<User> = userLiveData
-
     private val compositeDisposable = CompositeDisposable()
 
-    fun authenticateUser(username: String, password: String) {
+    private val userLiveData = MutableLiveData<User>()
+    fun userObservable(): LiveData<User> = userLiveData
+
+    val usernameLiveData = MutableLiveData<String>()
+    val passwordLiveData = MutableLiveData<String>()
+
+    init {
+        usernameLiveData.value = ""
+        passwordLiveData.value = ""
+    }
+
+    private fun authenticateUser(username: String, password: String) {
 
         authInterceptor.setCredentials(username, password)
 
@@ -87,6 +95,13 @@ class LoginViewModel: BaseViewModel() {
         sharedPrefsEditor.putString(Constants.SharedPrefsKeys.USER_NAME, username)
         sharedPrefsEditor.putString(Constants.SharedPrefsKeys.USER_PASS, password)
         sharedPrefsEditor.apply()
+    }
+
+    fun onLoginClicked() {
+
+        if (!usernameLiveData.value.isNullOrEmpty() && !passwordLiveData.value.isNullOrEmpty())
+            authenticateUser(usernameLiveData.value!!, passwordLiveData.value!!)
+
     }
 
 

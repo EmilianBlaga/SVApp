@@ -5,27 +5,28 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.fragment_repository_list.*
 import ro.ebsv.githubapp.R
+import ro.ebsv.githubapp.databinding.FragmentRepositoryListBinding
 import ro.ebsv.githubapp.repositories.adapters.RepositoryListAdapter
 import ro.ebsv.githubapp.repositories.listeners.OnRepositoryClickListener
 import ro.ebsv.githubapp.room.entities.RepositoryEntity
-import javax.inject.Inject
 
 class RepositoryListFragment: Fragment(), OnRepositoryClickListener {
 
-    @Inject
-    lateinit var viewModel: RepositoryViewModel
+    private lateinit var binder: FragmentRepositoryListBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binder = DataBindingUtil.inflate(inflater, R.layout.fragment_repository_list, container, false)
         activity?.let {
-            viewModel = ViewModelProviders.of(it).get(RepositoryViewModel::class.java)
+            binder.viewModel = ViewModelProviders.of(it).get(RepositoryViewModel::class.java)
         }
-        return inflater.inflate(R.layout.fragment_repository_list, container, false)
+
+        return binder.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -33,23 +34,20 @@ class RepositoryListFragment: Fragment(), OnRepositoryClickListener {
 
         setupRecyclerView()
 
-        setupObservables()
+        binder.viewModel?.getRepositories()
 
-        viewModel.getRepositories()
+        binder.viewModel?.repositoriesLiveData()?.observe(this, Observer {
+            binder.repositoryAdapter?.setData(it)
+        })
+
     }
 
     private fun setupRecyclerView() {
-        rvRepositories.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-        rvRepositories.adapter = RepositoryListAdapter(this)
-    }
-
-    private fun setupObservables() {
-        viewModel.repositoriesLiveData().observe(this, Observer { repositories ->
-            (rvRepositories.adapter as RepositoryListAdapter).setRepositories(repositories as ArrayList<RepositoryEntity>)
-        })
+        binder.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+        binder.repositoryAdapter = RepositoryListAdapter(this)
     }
 
     override fun onRepositoryClicked(repository: RepositoryEntity) {
-        viewModel.setRepository(repository)
+        binder.viewModel?.setRepository(repository)
     }
 }

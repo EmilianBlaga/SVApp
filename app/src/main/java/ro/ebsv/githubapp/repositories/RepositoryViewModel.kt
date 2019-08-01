@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.sqlite.db.SimpleSQLiteQuery
 import io.reactivex.disposables.CompositeDisposable
+import ro.ebsv.githubapp.BR
 import ro.ebsv.githubapp.base.BaseViewModel
 import javax.inject.Inject
 import javax.inject.Named
@@ -23,16 +24,16 @@ class RepositoryViewModel: BaseViewModel() {
     @field:Named("GithubDataBase")
     lateinit var dataBase: GithubDataBase
 
-    private val reposLiveData = MutableLiveData<List<RepositoryEntity>>()
-    private val repositoryLiveData = MutableLiveData<RepositoryEntity>()
-
     private var currentAffiliation = enumValues<Constants.Repository.Filters.Affiliation>().joinToString {it.name}
     private var currentSortCriteria = Constants.Repository.Sort.Criteria.full_name
     private lateinit var currentVisibility: Constants.Repository.Filters.Visibility
 
     private val compositeDisposable = CompositeDisposable()
 
+    val reposLiveData = MutableLiveData<List<RepositoryEntity>>()
     fun repositoriesLiveData(): LiveData<List<RepositoryEntity>> = reposLiveData
+
+    val repositoryLiveData = MutableLiveData<RepositoryEntity>()
     fun repositoryLiveData(): LiveData<RepositoryEntity> = repositoryLiveData
 
     fun getCurrentReposData(): Pair<String, Constants.Repository.Sort.Criteria> {
@@ -64,7 +65,7 @@ class RepositoryViewModel: BaseViewModel() {
         currentAffiliation = affiliation
         currentSortCriteria = sort
 
-        val apiDisp = apiService.getRepositories(visibility, affiliation, sort, direction)
+        val apiDisp = apiService.getRepositories(visibility.getValue(), affiliation, sort, direction)
             .subscribe({repos ->
                 val entityReposList = repos.map { it.toRepositoryEntity() }
 
@@ -81,13 +82,13 @@ class RepositoryViewModel: BaseViewModel() {
                 var queryString = "SELECT * FROM repositories WHERE "
 
                 queryString += when (visibility) {
-                    Constants.Repository.Filters.Visibility.all -> {
+                    Constants.Repository.Filters.Visibility.all_repos -> {
                         "private_repo IN (0, 1) AND "
                     }
-                    Constants.Repository.Filters.Visibility.private -> {
+                    Constants.Repository.Filters.Visibility.private_repos -> {
                         "private_repo = 1 AND "
                     }
-                    Constants.Repository.Filters.Visibility.public -> {
+                    Constants.Repository.Filters.Visibility.public_repos -> {
                         "private_repo = 0 AND "
                     }
                 }

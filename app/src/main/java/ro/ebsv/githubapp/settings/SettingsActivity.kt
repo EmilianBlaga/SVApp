@@ -77,8 +77,8 @@ class SettingsActivity : AppCompatActivity(), OnFiltersSelectListener {
     }
 
     private fun createSettingsArray() {
-        val affiliationSetting = Setting(getString(R.string.affiliation), getString(R.string.affiliation_desc))
-        val sortSetting = Setting(getString(R.string.sort), getString(R.string.sort_desc))
+        val affiliationSetting = Setting(0, getString(R.string.affiliation), getString(R.string.affiliation_desc))
+        val sortSetting = Setting(1, getString(R.string.sort), getString(R.string.sort_desc))
 
         val settings = arrayListOf(affiliationSetting, sortSetting)
 

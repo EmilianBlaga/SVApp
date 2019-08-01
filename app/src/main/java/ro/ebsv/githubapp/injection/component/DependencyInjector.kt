@@ -4,10 +4,9 @@ import dagger.Component
 import ro.ebsv.githubapp.injection.module.AppModule
 import ro.ebsv.githubapp.injection.module.NetworkModule
 import ro.ebsv.githubapp.injection.module.StorageModule
-import ro.ebsv.githubapp.login.LoginViewModel
+import ro.ebsv.githubapp.login.mvvm.LoginViewModel
 import ro.ebsv.githubapp.main.MainViewModel
 import ro.ebsv.githubapp.repositories.RepositoryViewModel
-import ro.ebsv.githubapp.splash.SplashActivity
 import ro.ebsv.githubapp.splash.SplashViewModel
 import javax.inject.Singleton
 

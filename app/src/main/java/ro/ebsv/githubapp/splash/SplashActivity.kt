@@ -7,7 +7,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import ro.ebsv.githubapp.R
 import ro.ebsv.githubapp.injection.ViewModelFactory
-import ro.ebsv.githubapp.login.LoginActivity
+import ro.ebsv.githubapp.login.mvvm.LoginActivity
 import ro.ebsv.githubapp.login.models.User
 import ro.ebsv.githubapp.main.MainActivity
 import ro.ebsv.githubapp.managers.UserManager

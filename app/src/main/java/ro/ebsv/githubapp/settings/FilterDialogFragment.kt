@@ -5,19 +5,21 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.fragment_filter.*
 import ro.ebsv.githubapp.R
 import ro.ebsv.githubapp.data.Constants
+import ro.ebsv.githubapp.databinding.FragmentFilterBinding
 import ro.ebsv.githubapp.settings.adapters.FiltersListAdapter
 import ro.ebsv.githubapp.settings.listeners.OnFiltersSelectListener
 import ro.ebsv.githubapp.settings.models.Filter
 
 class FilterDialogFragment: DialogFragment() {
 
-    lateinit var filtersSelectListener: OnFiltersSelectListener
+    private lateinit var filtersSelectListener: OnFiltersSelectListener
+    private lateinit var binder: FragmentFilterBinding
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -27,7 +29,9 @@ class FilterDialogFragment: DialogFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_filter, container, false)
+        binder = DataBindingUtil.inflate(inflater, R.layout.fragment_filter, container, false)
+        binder.fragment = this
+        return binder.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -37,7 +41,6 @@ class FilterDialogFragment: DialogFragment() {
 
         getFilters()
 
-        setupActions()
     }
 
     override fun onStart() {
@@ -48,13 +51,13 @@ class FilterDialogFragment: DialogFragment() {
     }
 
     private fun setupRecyclerView() {
-        rvFilters.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-        rvFilters.adapter = FiltersListAdapter()
+        binder.filtersLayoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+        binder.filtersAdapter = FiltersListAdapter()
     }
 
     private fun getFilters() {
 
-        val selectedFiltersString= arguments?.getString(Constants.Repository.BundleKeys.DEFAULT_FILTER)
+        val selectedFiltersString = arguments?.getString(Constants.Repository.BundleKeys.DEFAULT_FILTER)
         val selectedFilters = selectedFiltersString?.split(",")?.map { it.replace(" ", "") }
 
         val filtersName = resources.getStringArray(R.array.filters)
@@ -71,19 +74,16 @@ class FilterDialogFragment: DialogFragment() {
             selectedFilters.any { it == filtersName[2].toLowerCase().replace(" ", "_") }))
 
 
-        (rvFilters.adapter as FiltersListAdapter).setFilters(filters)
+        binder.filtersAdapter?.setFilters(filters)
     }
 
-    private fun setupActions() {
-        mbCancel.setOnClickListener {
-            dismiss()
-        }
-
-        mbOK.setOnClickListener {
-            filtersSelectListener.onFiltersSelected((rvFilters.adapter as FiltersListAdapter).getFilterFieldKey())
-            dismiss()
-        }
+    fun onCancelClicked() {
+        dismiss()
     }
 
+    fun onOkClicked() {
+        filtersSelectListener.onFiltersSelected(binder.filtersAdapter?.getFilterFieldKey() ?: "")
+        dismiss()
+    }
 
 }

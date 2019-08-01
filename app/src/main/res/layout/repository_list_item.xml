@@ -1,7 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/tvRepoName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/repository_list_margin"/>
+
+<layout
+        xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+                name="repository"
+                type="ro.ebsv.githubapp.room.entities.RepositoryEntity"/>
+        <variable
+                name="clickListener"
+                type="ro.ebsv.githubapp.repositories.listeners.OnRepositoryClickListener"/>
+    </data>
+
+    <TextView
+            android:id="@+id/tvRepoName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/repository_list_margin"
+            android:text="@{repository.full_name}"
+            android:onClick="@{() -> clickListener.onRepositoryClicked(repository)}"/>
+</layout>

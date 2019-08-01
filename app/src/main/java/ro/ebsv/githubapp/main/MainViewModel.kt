@@ -6,7 +6,10 @@ import androidx.lifecycle.MutableLiveData
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import ro.ebsv.githubapp.base.BaseViewModel
+import ro.ebsv.githubapp.data.Constants
+import ro.ebsv.githubapp.managers.UserManager
 import ro.ebsv.githubapp.room.database.GithubDataBase
+import ro.ebsv.githubapp.room.entities.UserEntity
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -25,8 +28,28 @@ class MainViewModel: BaseViewModel() {
     private val compositeDisposable = CompositeDisposable()
 
     private val clearDataLiveData = MutableLiveData<Boolean>()
-
     fun onClearData(): LiveData<Boolean> = clearDataLiveData
+
+    val userLiveData = MutableLiveData<UserEntity>()
+
+    private val sendEmailLiveData = MutableLiveData<String>()
+    fun getEmailLiveData() = sendEmailLiveData
+
+
+    private val openReposLiveData = MutableLiveData<Constants.Repository.Filters.Visibility>()
+    fun getOpenReposLiveData() = openReposLiveData
+
+    init {
+        userLiveData.value = UserManager.user
+    }
+
+    fun onReposClicked(visibility: Constants.Repository.Filters.Visibility) {
+        openReposLiveData.value = visibility
+    }
+
+    fun onSendEmailClicked() {
+        sendEmailLiveData.value = userLiveData.value?.email
+    }
 
     fun clearData() {
         sharedPreferences.edit().clear().apply()

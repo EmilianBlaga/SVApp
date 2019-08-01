@@ -2,7 +2,7 @@ package ro.ebsv.githubapp.base
 
 import androidx.lifecycle.ViewModel
 import ro.ebsv.githubapp.application.GithubApp
-import ro.ebsv.githubapp.login.LoginViewModel
+import ro.ebsv.githubapp.login.mvvm.LoginViewModel
 import ro.ebsv.githubapp.main.MainViewModel
 import ro.ebsv.githubapp.repositories.RepositoryViewModel
 import ro.ebsv.githubapp.splash.SplashViewModel

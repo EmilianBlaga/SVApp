@@ -1,44 +1,36 @@
-package ro.ebsv.githubapp.login
+package ro.ebsv.githubapp.login.mvvm
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.TextUtils
 import android.widget.Toast
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import kotlinx.android.synthetic.main.activity_login.*
 import ro.ebsv.githubapp.R
+import ro.ebsv.githubapp.databinding.ActivityLoginBinding
 import ro.ebsv.githubapp.injection.ViewModelFactory
 import ro.ebsv.githubapp.login.models.User
 import ro.ebsv.githubapp.main.MainActivity
 
 class LoginActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: LoginViewModel
+    private lateinit var binder: ActivityLoginBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        viewModel = ViewModelProviders.of(this, ViewModelFactory(this)).get(LoginViewModel::class.java)
+        binder = DataBindingUtil.setContentView(this, R.layout.activity_login)
+        binder.lifecycleOwner = this
+        binder.viewModel = ViewModelProviders.of(this, ViewModelFactory(this)).get(LoginViewModel::class.java)
 
-        setupActions()
         setupObservers()
-    }
 
-    private fun setupActions() {
-        mbLogin.setOnClickListener {
-            when {
-                TextUtils.isEmpty(tietUsername.text) -> tilUsername.error = "Username must not be empty."
-                TextUtils.isEmpty(tietPassword.text) -> tilPassword.error = "Password must not be empty."
-                else -> viewModel.authenticateUser(tietUsername.text.toString(), tietPassword.text.toString())
-            }
-        }
     }
 
     private fun setupObservers() {
-        viewModel.userObservable().observe(this, Observer { user ->
+        binder.viewModel?.userObservable()?.observe(this, Observer { user ->
             when (user) {
                 is User.Success -> {
                     goToMain()

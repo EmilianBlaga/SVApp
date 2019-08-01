@@ -26,7 +26,7 @@
             </intent-filter>
         </activity>
         <activity
-                android:name=".login.LoginActivity"
+                android:name=".login.mvvm.LoginActivity"
                 android:screenOrientation="portrait"
                 android:theme="@style/NoActionBarTheme"/>
         <activity
@@ -38,10 +38,10 @@
         <activity
                 android:name=".repoold.RepositoryListActivity"
                 android:label="@string/title_repository_list"
-                android:parentActivityName=".login.LoginActivity">
+                android:parentActivityName=".login.mvvm.LoginActivity">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value="ro.ebsv.githubapp.login.LoginActivity"/>
+                    android:value="ro.ebsv.githubapp.login.mvvm.LoginActivity"/>
         </activity>
         <activity
                 android:name=".repoold.RepositoryDetailActivity"

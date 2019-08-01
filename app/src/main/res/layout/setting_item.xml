@@ -1,35 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <TextView
-            android:id="@+id/tvSettingName"
+<layout>
+
+    <data>
+        <variable
+                name="setting"
+                type="ro.ebsv.githubapp.settings.models.Setting"/>
+
+        <variable
+                name="clickListener"
+                type="ro.ebsv.githubapp.settings.listeners.OnSettingClickListener"/>
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/affiliation"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_margin="@dimen/setting_item_margin"
-            style="@style/SettingName"/>
+            android:onClick="@{() -> clickListener.onSettingClicked(setting.id)}">
 
-    <TextView
-            android:id="@+id/tvSettingDesc"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/affiliation_desc"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvSettingName"
-            android:layout_margin="@dimen/setting_item_margin"
-            style="@style/SettingDesc"/>
+        <TextView
+                android:id="@+id/tvSettingName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@{setting.name}"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_margin="@dimen/setting_item_margin"
+                style="@style/SettingName"/>
 
-    <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/black"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvSettingDesc"
-            android:layout_marginTop="@dimen/setting_item_margin"/>
+        <TextView
+                android:id="@+id/tvSettingDesc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@{setting.description}"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvSettingName"
+                android:layout_margin="@dimen/setting_item_margin"
+                style="@style/SettingDesc"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvSettingDesc"
+                android:layout_marginTop="@dimen/setting_item_margin"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

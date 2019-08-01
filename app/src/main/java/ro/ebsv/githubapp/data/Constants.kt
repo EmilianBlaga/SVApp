@@ -24,7 +24,19 @@ class Constants {
         class Filters {
 
             enum class Visibility {
-                all, public, private
+                all_repos {
+                    override fun getValue() = "all"
+                },
+
+                public_repos {
+                    override fun getValue() = "public"
+                },
+
+                private_repos {
+                    override fun getValue() = "private"
+                };
+
+                abstract fun getValue() : String
             }
 
             enum class Affiliation {

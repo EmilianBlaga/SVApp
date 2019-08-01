@@ -1,12 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.recyclerview.widget.RecyclerView
-        xmlns:android="http://schemas.android.com/apk/res/android"
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/rvRepositories"
-        android:name="ro.ebsv.githubapp.repositories.RepositoryListFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layoutManager="LinearLayoutManager"
-        tools:listitem="@layout/repository_list_item"
-        android:background="@color/colorPrimaryLight"/>
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+                name="viewModel"
+                type="ro.ebsv.githubapp.repositories.RepositoryViewModel"/>
+        <variable 
+                name="layoutManager" 
+                type="androidx.recyclerview.widget.LinearLayoutManager"/>
+        <variable
+                name="repositoryAdapter"
+                type="ro.ebsv.githubapp.repositories.adapters.RepositoryListAdapter"/>
+    </data>
+
+    <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvRepositories"
+            android:name="ro.ebsv.githubapp.repositories.RepositoryListFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutManager="@{layoutManager}"
+            android:adapter="@{repositoryAdapter}"
+            tools:listitem="@layout/repository_list_item"
+            android:background="@color/colorPrimaryLight"/>
+
+</layout>
